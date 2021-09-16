@@ -1,0 +1,30 @@
+git clone https://github.com/lizalbers-github/DO180-apps.git
+lab openshift-s2i start
+git checkout master
+git status
+git checkout -b s2i
+git push -u origin s2i
+cat DO180-apps/php-helloworld/index.php
+source /usr/local/etc/ocp4.config
+oc login -u mrcihj -p fd2a2d78bee441a18a77 https://api.na45.prod.nextcle.com:6443
+oc new-project mrcihj-s2i
+oc new-app --as-deployment-config php:7.3 --name=php-helloworld https://github.com/lizalbers-github/DO180-apps#s2i --context-dir php-helloworld
+oc get pods
+oc logs --all-containers -f php-helloworld-1-build
+oc describe dc/php-helloworld
+oc get svc
+oc expose service php-helloworld --name=mrcihj-helloworld
+oc get route -o jsonpath='{..spec.host}{"\n"}'
+curl -s mrcihj-helloworld-mrcihj-s2i.apps.na45.prod.nextcle.com
+vi DO180-apps/php-helloworld/index.php
+- ADD LINE : print "A change is a coming!\n";
+cd DO180-apps/php-helloworld
+git add .
+git commit -m "Changed index page contents."
+git push origin s2i
+oc start-build php-helloworld
+oc logs php-helloworld-2-build -f
+oc get pods
+oc get routes
+curl -s mrcihj-helloworld-mrcihj-s2i.apps.na45.prod.nextcle.com
+lab openshift-s2i finish

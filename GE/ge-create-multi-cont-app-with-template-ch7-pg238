@@ -1,0 +1,27 @@
+lab multicontainer-openshift start
+cd DO180/labs/multicontainer-openshift/images/mysql
+sudo podman build -t do180-mysql-57-rhel7 .
+source /usr/local/etc/ocp4.config
+sudo podman login quay.io -u lalbers
+sudo podman tag do180-mysql-57-rhel7 quay.io/lalbers/do180-mysql-57-rhel7
+sudo podman push quay.io/lalbers/do180-mysql-57-rhel7
+ - through gui make do180-mysql-57-rhel7 public
+cd ../..
+cd images/nodejs
+sudo podman build --layers=false -t do180-nodejs .
+cd ../..
+cd deploy/nodejs/
+./build.sh
+sudo podman tag do180/todonodejs quay.io/lalbers/do180-todonodejs
+sudo podman push quay.io/lalbers/do180-todonodejs
+ - through gui make do180-mysql-57-rhel7 public
+oc login -u mrcihj -p fd2a2d78bee441a18a77 https://api.na45.prod.nextcle.com:6443
+oc new-project $DUSER-template
+cd ..
+vi todo-template.json 
+oc process -f todo-template.json -p RHT_OCP4_QUAY_USER=lalbers | oc create -f -
+oc get pods -w
+oc expose service todoapi
+oc status | grep -o "http:.*com"
+curl -w "\n" $(oc status | grep -o "http:.*com")/todo/api/items/1
+lab multicontainer-openshift finish
