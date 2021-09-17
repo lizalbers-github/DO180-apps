@@ -1,0 +1,13 @@
+lab openshift-review start
+source /usr/local/etc/ocp4.config
+oc login -u mrcihj -p fd2a2d78bee441a18a77 https://api.na45.prod.nextcle.com:6443
+oc new-project mrcihj-ocp
+oc new-app --as-deployment-config -i php:7.3 https://github.com/RedHatTraining/DO180-apps --context-dir temps --name temps
+oc new-app --as-deployment-config php:7.3~https://github.com/RedHatTraining/DO180-apps --context-dir temps --name temps
+oc get pods
+oc get svc
+oc expose svc temps
+oc get route
+curl -s http://temps-mrcihj-ocp.apps.na45.prod.nextcle.com
+lab openshift-review grade
+lab openshift-review finish

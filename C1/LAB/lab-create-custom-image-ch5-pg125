@@ -1,0 +1,9 @@
+lab dockerfile-review start
+vi /home/student/DO180/labs/dockerfile-review/Dockerfile 
+cd /home/student/DO180/labs/dockerfile-review
+sudo podman build --layers=false -t do180/custom-apache .
+sudo podman images
+sudo podman run -d --name dockerfile -p 20080:8080 do180/custom-apache
+sudo podman inspect -f '{{ .NetworkSettings.IPAddress }}' dockerfile
+curl http://10.88.0.23:8080
+lab dockerfile-review grade

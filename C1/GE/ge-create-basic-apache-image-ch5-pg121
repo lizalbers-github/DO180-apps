@@ -1,0 +1,9 @@
+lab dockerfile-create start
+vi /home/student/DO180/labs/dockerfile-create/Dockerfile
+cd /home/student/DO180/labs/dockerfile-create
+sudo podman build --layers=false -t do180/apache .
+sudo podman images
+sudo podman run -d --name lab-apache -p 10080:80 do180/apache
+sudo podman ps
+curl localhost:10080
+lab dockerfile-create finish
