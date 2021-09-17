@@ -1,0 +1,64 @@
+lab network-ingress start
+oc login -u developer -p developer  https://api.ocp4.example.com:6443
+oc new-project network-ingress
+oc create -f  ~/DO280/labs/network-ingress/todo-app-v1.yaml
+cat ~/DO280/labs/network-ingress/todo-app-v1.yaml
+oc get pods
+oc status
+oc expose svc todo-http  --hostname todo-http.apps.ocp4.example.com
+oc get routes
+tcpdump -i eth0
+tcpdump -i eth0 -A -n port 80
+sudo tcpdump -i eth0 -A -n port 80
+oc get pods
+oc get routes
+oc get routes -n
+oc get pods -o wide
+oc get service
+ip a
+ip a|grep 172.25.250.9
+cat ~/DO280/labs/network-ingress/tcpdumpcommand.txt
+cd
+cd DO280/
+cd labs/
+cd network-ingress/
+ls
+cd
+cat ~/DO280/labs/network-ingress/tcpdump-command.txt
+sudo tcpdump -i eth0 -A -n port 80 | grep js
+cd ~/DO280/labs/network-ingress
+oc create route edge todo-https --service todo-http  --hostname todo-https.apps.ocp4.example.com
+oc get routes
+curl https://todo-https.apps.ocp4.example.com
+sudo tcpdump -i eth0 -A -n port 80 | grep js
+oc login -u admin -p redhat
+oc extract secrets/router-ca > --keys tls.crt -n openshift-ingress-operator
+oc extract secrets/router-ca --keys tls.crt -n openshift-ingress-operator
+ls tls.crt
+pwd
+curl -I -v --cacert tls.crt https://todo-https.apps.ocp4.example.com
+oc login -u developer -p developer
+oc get svc todo-http -o jsonpath="{.spec.clusterIP}{'\n'}"
+oc debug -t deployment/todo-http --image registry.access.redhat.com/ubi8/ubi:8.0
+oc get services
+oc get routes
+oc delete route todo-https
+cd ~/DO280/labs/network-ingress/certs
+ls -l
+openssl genrsa -out training.key 2048
+openssl req -new  -subj "/C=US/ST=North Carolina/L=Raleigh/O=Red Hat/ CN=todo-https.apps.ocp4.example.com" -key training.key -out training.csr
+openssl x509 -req -in training.csr -passin file:passphrase.txt -CA training-CA.pem -CAkey training-CA.key -CAcreateserial -out training.crt -days 1825 -sha256 -extfile training.ext
+ls -ltr
+cd ~/DO280/labs/network-ingress
+oc create secret tls todo-certs --cert certs/training.crt --key certs/training.key
+ls
+oc create -f todo-app-v2.yaml
+oc get pods
+oc describe pod todo-https-85bff5b996-957gf | grep Mounts -A2
+oc create route passthrough todo-https --service todo-https --port 8443 --hostname todo-https.apps.ocp4.example.com
+curl -vvI --cacert certs/training-CA.pem https://todo-https.apps.ocp4.example.com
+oc get svc todo-https -o jsonpath="{.spec.clusterIP}{'\n'}"
+oc debug -t deployment/todo-https --image registry.access.redhat.com/ubi8/ubi:8.0
+cd
+oc delete project network-ingress
+lab network-ingress finish

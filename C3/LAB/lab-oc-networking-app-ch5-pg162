@@ -1,0 +1,92 @@
+lab network-review start
+oc login -u developer -p developer https://api.ocp4.example.com:6443
+oc new-project network-review
+cd ~/DO280/labs/network-review/
+ls
+vi php-http.yaml 
+oc create -f php-http.yaml 
+oc get pods
+oc describe pod php-http-7585bf95c9-tkhmx
+oc expose svc php-http  --hostname php-http.apps.ocp4.example.com
+oc get routes
+ls
+vi deny-all.yaml 
+oc get network-policies
+oc create -f deny-all.yaml 
+oc get network-policies
+oc whoami
+curl http://php-http.apps.ocp4.example.com
+ls
+vi allow-from-openshift-ingress.yaml
+oc create -f allow-from-openshift-ingress.yaml 
+oc login -u admin -p redhat
+oc label namespace default network.openshift.io/policy-group=ingress
+grep network.openshift.io allow-from-openshift-ingress.yaml 
+for X in {1..4}; do curl -s http://php-http.apps.ocp4.example.com | grep "PHP"; done
+oc login -u developer -p developer
+cd ~/DO280/labs/network-review/certs
+openssl req -new -key training.key -subj "/C=US/ST=North Carolina/L=Raleigh/O=Red Hat CN=php-https.apps.ocp4.example.com" -out training.csr
+openssl x509 -req -in training.csr -CA training-CA.pem -CAkey training-CA.key -CAcreateserial -passin file:passphrase.txt -out training.crt -days 3650 -sha256 -extfile training.ext
+ls -ltr
+oc get secrets
+oc create secret tls php-certs --cert certs/training.crt --key certs/training.key
+cd ~/DO280/labs/network-review
+oc create secret tls php-certs --cert certs/training.crt --key certs/training.key
+oc get secrets
+vi php-https.yaml 
+mkdir ~/FILES/ch5lab
+cp * ~/FILES/ch5lab
+ls ~/FILES/ch5lab
+ls
+mkdir ~/FILES/ch5lab/certs
+cp certs/* ~/FILES/ch5lab/certs
+oc create -f php-https.yaml 
+oc whoami
+diff php-http.yaml php-https.yaml
+ls
+vi php-https.yaml
+oc create -f php-https.yaml 
+oc get services
+oc get routes
+oc get pods
+oc stop pod php-https-5df75876c5-tfl47
+oc delete pod php-https-5df75876c5-tfl47
+oc get pods
+oc get services
+ls
+ls FILES/
+ls ~/FILES/
+cp php-https.yaml ~/FILES/ch5lab/
+oc get pods
+oc create route passthrough php-https --service php-https --port 8443 --hostname php-https.apps.ocp4.example.com
+oc get route
+grep 8443 php-https.yaml 
+curl -v --cacert certs/training-CA.pem https://php-https.apps.ocp4.example.com
+ls
+lab network-review grade
+lab network-review finish
+cd /
+lab network-review finish
+pwd
+cd /home/student
+lab network-review finish
+ls
+cd DO280
+ls
+ls labs/
+ls labs/network-review/
+ls
+ls -ltr
+cd /
+ls labs/network-review/
+cd
+lab network-review finish
+pwd
+ls
+ls -ltr
+ls LAB
+ls LABS
+history > lab
+ls -ltr GE
+ls
+history > x

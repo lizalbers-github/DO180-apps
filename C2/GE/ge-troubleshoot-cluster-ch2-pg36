@@ -1,0 +1,28 @@
+lab execute-troubleshoot start
+source /usr/local/etc/ocp4.config
+oc login -u kubeadmin -p nIMBQ-ZoYZ5-UyS5D-oGTjF https://api.ocp4.example.com:6443
+oc get nodes  # get cluster nodes
+oc adm top node  # get stats on cpu and memory for nodes
+oc describe node master01  # Pay attention to the "conditions" section
+oc get pod -n openshift-image-registry  # list pos in openshift-image-registry project
+oc logs --tail 3 -n openshift-image-registry cluster-image-registry-operator-5f47f6fcf7-zklql  # fails because multiple containers
+oc logs --tail 3 -n openshift-image-registry cluster-image-registry-operator-5f47f6fcf7-zklql -c cluster-image-registry-operator  # server pod log
+oc logs --tail 1 -n openshift-image-registry image-registry-6646d7f8d8-xrx64 # server pod log
+oc adm node-logs --tail 1 -u kubelet master01  # Kubelet log from master01 node
+oc debug node/master01  # get a session shell on master01 node
+   - chroot /host  # enter local filesystem of host
+   - systemctl status kubelet  # verify container engine
+   - systemctl status cri-o  # verify container engine
+   - crictl ps --name openvswitch # check openvswitch pod
+   - exit
+   - exit
+oc project execute-troubleshoot
+oc get pod
+oc status
+oc get events  # we will see errors here
+skopeo inspect docker://registry.access.redhat.com/rhscl/postgresq-96-rhel7:1  # image from event log
+skopeo inspect docker://registry.access.redhat.com/rhscl/postgresql-96-rhel7:1 # looks like a typo - fix
+oc edit deployment/psql
+oc status
+oc get pods
+lab execute-troubleshoot finish
