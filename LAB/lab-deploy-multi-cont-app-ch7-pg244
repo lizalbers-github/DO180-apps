@@ -1,0 +1,31 @@
+lab multicontainer-review start
+cd ~/DO180/labs/multicontainer-review
+source /usr/local/etc/ocp4.config
+oc login -u mrcihj -p fd2a2d78bee441a18a77 https://api.na45.prod.nextcle.com:6443
+oc new-project mrcihj-deploy
+cd images/mysql
+sudo podman build -t do180-mysql-57-rhel7 .
+sudo podman images
+sudo podman login -u lalbers quay.io
+- enter password
+sudo podman tag do180-mysql-57-rhel7 quay.io/lalbers/do180-mysql-57-rhel7
+sudo podman push quay.io/lalbers/do180-mysql-57-rhel7
+cd /home/student/DO180/labs/multicontainer-review/
+cat quote-php-template.json 
+cd images/quote-php
+cat build.sh 
+sudo podman build -t do180-quote-php .
+sudo podman images
+sudo podman tag do180-quote-php quay.io/lalbers/do180-quote-php
+sudo push quay.io/lalbers/do180-quote-php
+sudo podman push quay.io/lalbers/do180-quote-php
+cd /home/student/DO180/labs/multicontainer-review/
+oc create -f quote-php-template.json 
+oc process quote-php-persistent  RHT_OCP4_QUAY_USER=lalbers | oc create -f -
+oc get pods 
+oc expose svc quote-php
+oc get routes
+curl -w "\n" http://quote-php-mrcihj-deploy.apps.na45.prod.nextcle.com
+lab multicontain-review grade
+lab multicontainer-review grade
+lab multicontainer-review finish
