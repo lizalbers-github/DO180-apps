@@ -1,0 +1,38 @@
+lab schedule-pods start
+oc login -u developer -p developer https://api.ocp4.example.com:6443
+oc new-project schedule-pods
+oc new-app --name hello --docker-image quay.io/redhattraining/hello-world-nginx:v1.0
+oc expose svc hello
+oc get all -o wide
+oc get replicaset
+oc edit deployment.apps/hello
+oc scale --replicas 4 deployment/hello
+oc get pods -o wide
+oc login -u admin -p redhat
+oc get nodes -L env
+oc label node master01 env=dev
+oc label node master02 env=prod
+oc get nodes -L env
+oc login -u developer -p developer
+pwd
+oc edit deployment/hello
+ - spec group / template section / spec group (after dnsPolicy)
+ - ADD: nodeSelector:
+ - ADD:   env:dev
+ - save/quit
+oc get pods -o wide -L env
+oc whoami
+oc delete project schedule-pods
+oc login -u admin -p redhat
+oc get nodes
+oc get nodes -o wide
+oc label node -l env env-  # removes the env labels from any/all nodes
+oc get pods -o wide -L client
+oc get node/master01 -o yaml > /tmp/x
+oc login -u developer -p developer
+oc get pods -o wide
+oc describe pod hello-ts-6bc96f8664-mrqk6  # note client=acme
+oc edit deployment hello-ts  # change client=acme => client=ACME
+oc get pods
+oc get pods -o wide
+lab schedule-pods finish

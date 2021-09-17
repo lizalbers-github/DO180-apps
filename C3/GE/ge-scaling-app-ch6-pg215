@@ -1,0 +1,34 @@
+    1  lab schedule-scale start
+    2  oc login -u developer -p developer https://api.ocp4.example.com:6443
+    3  oc new-project schedule-scale
+    4  vi ~/DO280/labs/schedule-scale/loadtest.yaml
+    5  oc create --save-config -f ~/DO280/labs/schedule-scale/loadtest.yaml
+    6  vi ~/DO280/labs/schedule-scale/loadtest.yaml
+    7  oc create --save-config -f ~/DO280/labs/schedule-scale/loadtest.yaml
+    8  oc get pods
+    9  oc describe pod/loadtest-7c88f9884b-q9vxz | grep -A2 -E "Limits|Requests"
+   10  oc scale --replicas 5 deployment/loadtest
+   11  oc get pods
+   12  oc scale --replicas 1 deployment/loadtest
+   13  oc get pods
+   14  oc autoscale deployment/loadtest --min 2 --max 10 --cpu-percent 50
+   15  watch oc get hpa/loadtest
+   16  oc get route/loadtest
+   17  curl -X GET http://loadtest-schedule-scale.apps.ocp4.example.com/api/loadtest/v1/cpu/1
+   18  oc new-app --name scaling --as-deployment-config --docker-image quay.io/redhattraining/scaling:v1.0
+   19  oc expose svc/scalingoc expose svc/scaling
+   20  oc expose svc/scaling
+   21  oc get pods
+   22  oc get pods -o wide -l deploymentconfig=scaling
+   23  oc get route/scaling
+   24  cat ~/DO280/labs/schedule-scale/curl-route.sh
+   25  oc get route/scaling -n schedule-scale -o jsonpath='{.spec.host}'
+   26  for i in {1..5};do curl -s http://scaling-schedule-scale.apps.ocp4.example.com;done
+   27  oc scale --replicas 3 dc/scaling
+   28  oc get pods -L deploymentconfig
+   29  oc get pods -l deploymentconfig=scaling
+   30  oc get pods -l deploymentconfig=scaling -o wide
+   31  for i in {1..5};do curl -s http://scaling-schedule-scale.apps.ocp4.example.com;done
+   32  curl -X GET http://loadtest-schedule-scale.apps.ocp4.example.com/api/loadtest/v1/cpu/1
+   33  lab schedule-scale finish
+   34  history > ge-scaling-app-ch6-pg215

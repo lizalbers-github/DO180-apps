@@ -1,0 +1,70 @@
+    1  ls
+    2  lab schedule-limit start
+    3  oc login -u developer -p developer https://api.ocp4.example.com:6443
+    4  oc new-project schedule-limit
+    5  oc create deployment hello-limit --image quay.io/redhattraining/hello-world-nginx:v1.0 --dry-run=client -o yaml > ~/DO280/labs/schedule-limit/hello-limit.yaml
+    6  oc get deployment
+    7  cat ~/DO280/labs/schedule-limit/hello-limit.yaml
+    8  vi ~/DO280/labs/schedule-limit/hello-limit.yaml
+    9  oc get all
+   10  oc create --save-config -f ~/DO280/labs/schedule-limit/hello-limit.yaml
+   11  oc get pods
+   12  oc get events --field-selector type=warning
+   13  oc get events --field-selector type=Warning
+   14  oc get events
+   15  oc get all
+   16  oc get replicaset
+   17  oc edit deploy hello-limit
+   18  oc get pods
+   19  vi ~/DO280/labs/schedule-limit/hello-limit.yaml
+   20  oc get pods
+   21  oc apply -f ~/DO280/labs/schedule-limit/hello-limit.yaml
+   22  oc get pods
+   23  oc apply -f ~/DO280/labs/schedule-limit/hello-limit.yaml
+   24  vi ~/DO280/labs/schedule-limit/hello-limit.yaml
+   25  oc apply -f ~/DO280/labs/schedule-limit/hello-limit.yaml
+   26  oc get pods
+   27  vi ~/DO280/labs/schedule-limit/hello-limit.yaml
+   28  oc apply -f ~/DO280/labs/schedule-limit/hello-limit.yaml
+   29  oc get pods
+   30  oc scale --replicas 4 deployment hello-limit
+   31  oc get pods
+   32  oc get pods -o wide
+   33  oc get events --field-selector type=Warning
+   34  oc create --save-config -f ~/DO280/labs/schedule-limit/loadtest.yaml
+   35  history|grep create
+   36  cat ~/DO280/labs/schedule-limit/loadtest.yaml
+   37  oc get routes
+   38  watch oc get pods
+   39  curl -X GET http://loadtest.apps.ocp4.example.com/api/loadtest/v1/mem/150/60
+   40  curl -X GET http://loadtest.apps.ocp4.example.com/api/loadtest/v1/mem/200/60
+   41  oc get all -L loadtest
+   42  oc get all -l app=loadtest
+   43  oc delete all -l app=loadtest
+   44  oc login -u admin -p redhat
+   45  oc create quota project-quota --hard cpu="3",memory="1G",configmaps="3" -n schedule-limit
+   46  oc login -u developer -p developer
+   47  for X in {1..4}; do oc create configmap my-config${X} --from-literal key${X}=value${X};done
+   48  oc login -u admin -p redhat
+   49  oc adm create-bootstrap-project-template -o yaml > /tmp/project-template.yaml
+   50  vi /tmp/project-template.yaml
+   51  cat /home/student/DO280/labs/schedule-limit/quota-limits.yaml
+   52  vi /tmp/project-template.yaml
+   53  oc get template -n openshift-config
+   54  oc whoami
+   55  oc create -f /tmp/project-template.yaml -n openshift-config
+   56  oc get template -n openshift-config
+   57  oc edit projects.config.openshift.io/cluster
+   58  watch oc get pods -n openshift-apiserver
+   59  oc new-project template-test
+   60  oc get template -n openshift-config
+   61  oc get resourcequotas,limitranges
+   62  oc delete project schedule-limit
+   63  oc get resourcequotas,limitranges
+   64  oc delete project template-test
+   65  oc get resourcequotas,limitranges
+   66  watch oc get pods -n openshift-apiserver
+   67  history|grep start
+   68  lab schedule-limit stop
+   69  lab schedule-limit finish
+   70  history > ge-limit-resource-usage-by-app-ch6-pg201
